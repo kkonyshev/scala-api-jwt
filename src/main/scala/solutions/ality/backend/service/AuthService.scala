@@ -6,28 +6,18 @@ import com.typesafe.scalalogging.LazyLogging
 import org.http4s._
 import org.http4s.dsl.io._
 import solutions.ality.backend.auth.AuthHelpers.User
-import solutions.ality.backend.auth.StatefulAuth
+import solutions.ality.backend.auth.{StatefulAuth, UserRepository}
 import tsec.authentication.{TSecAuthService, asAuthed}
 
 object AuthService extends LazyLogging {
 
-  final val testUsername = "john"
-  final val testPassword = "secret"
-
   object UsernameQueryParam extends QueryParamDecoderMatcher[String]("username")
   object PasswordQueryParam extends QueryParamDecoderMatcher[String]("password")
-
-  def fetchUser(username: String, password: String): Option[User] = {
-    (username, password) match {
-      case (testUsername, testPassword) => Some(StatefulAuth.john)
-      case _ => None
-    }
-  }
 
   val login = HttpRoutes.of[IO] {
     case _ @ POST -> Root / "login" :? UsernameQueryParam(username) :? PasswordQueryParam(password) => {
       val response = for {
-        user <- IO.fromOption(fetchUser(username, password))(new RuntimeException("user not found"))
+        user <- IO.fromOption(UserRepository.fetchUser(username, password))(new RuntimeException("username or password does not match"))
         resp <- Ok()
         auth <- StatefulAuth.jwtStatefulAuth.create(user.id)
         _    <- IO.delay(logger.info(s"$user logged in successfully."))
