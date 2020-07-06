@@ -21,19 +21,9 @@ val logging = Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
   )
 
-val circeDependencies = Seq(
-  "io.circe" %% "circe-core"            % circleVersion,
-  "io.circe" %% "circe-generic"         % circleVersion,
-  "io.circe" %% "circe-generic-extras"  % circleVersion,
-  "io.circe" %% "circe-parser"          % circleVersion,
-  "io.circe" %% "circe-literal"         % circleVersion
-  )
-
 val http4sDependencies = Seq(
   "org.http4s" %% "http4s-blaze-server" % http4sVersion,
-  "org.http4s" %% "http4s-circe"        % http4sVersion,
-  "org.http4s" %% "http4s-dsl"          % http4sVersion,
-  "org.json4s" %% "json4s-native"       % "3.7.0-M2"
+  "org.http4s" %% "http4s-circe"        % http4sVersion
   )
 
 val tSecDependencies = Seq(
@@ -56,7 +46,6 @@ val testDependency = Seq(
   )
 
 libraryDependencies ++= logging
-libraryDependencies ++= circeDependencies
 libraryDependencies ++= http4sDependencies
 libraryDependencies ++= tSecDependencies
 libraryDependencies ++= testDependency
